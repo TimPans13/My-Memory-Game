@@ -7,11 +7,20 @@ public class GameMasterScript : MonoBehaviour
 {
     [SerializeField] List<Sprite> sprites;
     [SerializeField] List<Image> objects;
+    [SerializeField] Text scoreText;
+    [SerializeField] Text attemptsText;
+    //[SerializeField] ButtonScript button;
+    ButtonScript button=new ButtonScript();
+
 
     private List<Sprite> distribution = new List<Sprite>();
 
     private CardScript firstCard;
     private CardScript secondCard;
+
+    private int score = 0;
+    private int attempts = 0;
+
 
 
     void Start()
@@ -48,7 +57,11 @@ public class GameMasterScript : MonoBehaviour
         }
     }
 
-    private void IsEquals(CardScript newCard)
+    public bool canOpen
+    {
+        get { return secondCard == null; }
+    }
+    public void GetCard(CardScript newCard)
     {
         if (firstCard == null)
         {
@@ -57,6 +70,33 @@ public class GameMasterScript : MonoBehaviour
         else
         {
             secondCard = newCard;
+            Sprite firstSprite = firstCard.GetSprite();
+            Sprite secondSprite = secondCard.GetSprite();
+            StartCoroutine(IsEquals(firstSprite, secondSprite));
         }
     }
+    private IEnumerator IsEquals(Sprite firstSprite, Sprite secondSprite)
+    {
+
+        if (firstSprite.Equals(secondSprite)) {
+            Debug.Log("win");
+            score++; 
+            scoreText.text = "Score : " + score;
+            if (score > 3) button.Restart();
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f); 
+
+            firstCard.Close();
+            secondCard.Close();
+        }
+
+        attempts++;
+        attemptsText.text = "Attempts : " + attempts;
+
+        firstCard = null;
+        secondCard = null;
+    }
+
 }
