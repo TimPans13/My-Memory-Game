@@ -82,7 +82,11 @@ public class GameMasterScript : MonoBehaviour
             Debug.Log("win");
             score++; 
             scoreText.text = "Score : " + score;
-            if (score > 3) button.Restart();
+            if (score > 3) 
+            {
+                yield return new WaitForSeconds(0.5f); 
+                button.Restart(); 
+            }
         }
         else
         {
